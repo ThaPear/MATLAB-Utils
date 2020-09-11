@@ -34,7 +34,7 @@ function ExportResult(project, resultname, exportfilename)
         ret = project.ResultNavigatorRequest('set selection', '0');
         th = project.RestoreParameter('aa_theta');
         ph = project.RestoreParameter('aa_phi');
-        touchstone = project.Touchstone();
+        touchstone = project.TOUCHSTONE();
         touchstone.Reset();
         touchstone.FileName(exportfilename);
         touchstone.Impedance(120*pi);

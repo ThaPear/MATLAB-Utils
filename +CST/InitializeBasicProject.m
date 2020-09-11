@@ -1,6 +1,8 @@
 function [project, dsproject] = InitializeBasicProject()
     project = CST.Application.NewMWS();
     dsproject = CST.Application.ActiveDS();
+    
+    project.StartBulkMode();
 
     project.AddToHistory('ChangeSolverType "HF Frequency Domain"');
 
@@ -28,10 +30,13 @@ function [project, dsproject] = InitializeBasicProject()
     % Add a single mesh adaptation sample at fmesh.
     fdsolver.AddSampleInterval('fmesh', '', 1, 'Single', 1);
     fdsolver.AddSampleInterval('fmin', 'fmax', 'nsamplesperGHz * (fmax-fmin) + 1', 'Equidistant', 0);
-    fdsolver.AddSampleInterval('', '', '', 'Automatic', 0);
+%    fdsolver.AddSampleInterval('', '', '', 'Automatic', 0);
 
     % PML on top.
     fdsolver.SetOpenBCTypeTet('PML');
+    
+    % Discrete points, no interpolation
+    fdsolver.SetMethod('Tetrahedral', 'Discrete samples only'); 
     fdsolver.EndBulkMode();
 
     %% Set up mesh adaptation settings
@@ -96,4 +101,6 @@ function [project, dsproject] = InitializeBasicProject()
     %% Enable Y and Z matrix calculation.
     postprocess1d = project.PostProcess1D();
     postprocess1d.ActivateOperation('YZ-matrices', 1);
+    
+    project.EndBulkMode();
 end

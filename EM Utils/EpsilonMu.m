@@ -1,9 +1,10 @@
+% S-parameters should be normalized to free-space (z0te and z0tm).
 function [er, mu] = EpsilonMu(f, Ste, Stm, Ste0, Stm0, height, th0, th, ph)
 %     printvar th*180/pi;
 %     printvar th0*180/pi;
     d = height;
     
-    k0 = 2*pi*f/3e8;
+    k0  = 2*pi*f/3e8;
     k00 = 2*pi*f/3e8;
     
     etaTE  = sqrt(((1+Ste.s11 ).^2 - Ste.s21.^2 ) ./ ((1-Ste.s11 ).^2 - Ste.s21.^2 )) .* sec(th );
@@ -12,10 +13,10 @@ function [er, mu] = EpsilonMu(f, Ste, Stm, Ste0, Stm0, height, th0, th, ph)
     etaTM  = sqrt(((1+Stm.s11 ).^2 - Stm.s21.^2 ) ./ ((1-Stm.s11 ).^2 - Stm.s21.^2 )) .* cos(th );
     etaTM0 = sqrt(((1+Stm0.s11).^2 - Stm0.s21.^2) ./ ((1-Stm0.s11).^2 - Stm0.s21.^2)) .* cos(th0);
 
-    if(real(etaTE)  < 0); etaTE  = -etaTE;  end
-    if(real(etaTM)  < 0); etaTM  = -etaTM;  end
-    if(real(etaTE0) < 0); etaTE0 = -etaTE0; end
-    if(real(etaTM0) < 0); etaTM0 = -etaTM0; end
+    if(real(etaTE)  < 0); error('Wrong'); end %etaTE  = -etaTE;  end
+    if(real(etaTM)  < 0); error('Wrong'); end %etaTM  = -etaTM;  end
+    if(real(etaTE0) < 0); error('Wrong'); end %etaTE0 = -etaTE0; end
+    if(real(etaTM0) < 0); error('Wrong'); end %etaTM0 = -etaTM0; end
 
     zetaTE  = Ste.s21  ./ (1 - Ste.s11 .*((etaTE .*cos(th ) - 1) ./ (etaTE  .* cos(th ) + 1)));
     zetaTE0 = Ste0.s21 ./ (1 - Ste0.s11.*((etaTE0.*cos(th0) - 1) ./ (etaTE0 .* cos(th0) + 1)));
@@ -23,12 +24,17 @@ function [er, mu] = EpsilonMu(f, Ste, Stm, Ste0, Stm0, height, th0, th, ph)
     zetaTM  = Stm.s21  ./ (1 - Stm.s11 .*((etaTM ./cos(th ) - 1) ./ (etaTM  ./ cos(th ) + 1)));
     zetaTM0 = Stm0.s21 ./ (1 - Stm0.s11.*((etaTM0./cos(th0) - 1) ./ (etaTM0 ./ cos(th0) + 1)));
 
+%     nTE  = @(m) -1j.*sqrt(-(  ((log(abs(zetaTE )) + 1j.*(angle(zetaTE ) + 2*pi*m)) ./ (-1j.*k0 .*d))  .^2 + sin(th ).^2));
+%     nTE0 = @(m) -1j.*sqrt(-(  ((log(abs(zetaTE0)) + 1j.*(angle(zetaTE0) + 2*pi*m)) ./ (-1j.*k00.*d))  .^2 + sin(th0).^2));
+% 
+%     nTM  = @(m) -1j.*sqrt(-(  ((log(abs(zetaTM )) + 1j.*(angle(zetaTM ) + 2*pi*m)) ./ (-1j.*k0 .*d))  .^2 + sin(th ).^2));
+%     nTM0 = @(m) -1j.*sqrt(-(  ((log(abs(zetaTM0)) + 1j.*(angle(zetaTM0) + 2*pi*m)) ./ (-1j.*k00.*d))  .^2 + sin(th0).^2));
+    
     nTE  = @(m) sqrt( ( (log(abs(zetaTE )) + 1j.*(angle(zetaTE ) + 2*pi*m)) ./ (-1j.*k0 .*d)).^2 + sin(th ).^2);
     nTE0 = @(m) sqrt( ( (log(abs(zetaTE0)) + 1j.*(angle(zetaTE0) + 2*pi*m)) ./ (-1j.*k00.*d)).^2 + sin(th0).^2);
 
     nTM  = @(m) sqrt(((log(abs(zetaTM )) + 1j.*(angle(zetaTM ) + 2*pi*m)) ./ (-1j.*k0 .*d)).^2 + sin(th ).^2);
     nTM0 = @(m) sqrt(((log(abs(zetaTM0)) + 1j.*(angle(zetaTM0) + 2*pi*m)) ./ (-1j.*k00.*d)).^2 + sin(th0).^2);
-
 
 %     eta  = @(S, th)     sqrt(((1+S.s11).^2 - S.s21.^2) ./ ((1-S.s11).^2 - S.s21.^2)) .* sec(th);
 %     zeta = @(S, th)     S.s21 ./ (1 - S.s11.*((eta(S, th).*cos(th) - 1) ./ (eta(S, th) .* cos(th) + 1)));
@@ -59,6 +65,16 @@ function [er, mu] = EpsilonMu(f, Ste, Stm, Ste0, Stm0, height, th0, th, ph)
     % Use m = mbar = 0 for all calculations.
     mbar = 0;
     m = 0;
+    
+    % Should be a passive medium, so imaginary part must be <0
+%     if(imag(nTE(mbar))  > 0); error('Wrong'); end
+%     if(imag(nTM(mbar))  > 0); error('Wrong'); end
+%     if(imag(nTE0(mbar)) > 0); error('Wrong'); end
+%     if(imag(nTM0(mbar)) > 0); error('Wrong'); end
+%     if(imag(nTE(m))  > 0); error('Wrong'); end
+%     if(imag(nTM(m))  > 0); error('Wrong'); end
+%     if(imag(nTE0(m)) > 0); error('Wrong'); end
+%     if(imag(nTM0(m)) > 0); error('Wrong'); end
 
     er.x = erx(mbar);
     er.y = ery(mbar);

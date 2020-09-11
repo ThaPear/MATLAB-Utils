@@ -5,7 +5,9 @@ function dispex(varargin)
         file = ST(2).file;
         file = strrep(file, '\', '/');
         line = ST(2).line;
+        % Use <<
         href = ['<a href="matlab: opentoline(''', file, ''',', num2str(line), ')"><<</a> '];
+        % Use link symbol
 %         href = ['<a href="matlab: opentoline(''', file, ''',', num2str(line), ')">', char(55357), char(56599), '</a> ', char(8197)];
     else
         href = '<< ';

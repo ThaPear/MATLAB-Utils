@@ -17,12 +17,17 @@ function [parameters, varargout] = LoadData(filename)
         case 'cut'
             [parameters, varargout] = CST.LoadData.Grasp(filename);
         otherwise
-            error('Unknown file format ''%s'' specified.', extension);
+            % Try to match the Touchstone anyway, since it could be s25p.
+            if((extension(1) == 's' || extension(1) == 'z') && extension(end) == 'p')
+                [parameters, varargout] = CST.LoadData.Touchstone(filename);
+            else
+                error('Unknown file format ''%s'' specified.', extension);
+            end
     end
     
     if(iscell(varargout) && nargout ~= length(varargout)+1)
         spl = strsplit(filename, '.');
-        error(['Invalid number of output arguments for file type ''', spl{end}, ''', ', num2str(length(varargout)+2), ' expected.']);
+        error(['Invalid number of output arguments for file type ''', spl{end}, ''', ', num2str(length(varargout)+1), ' expected.']);
     elseif(~iscell(varargout))
         error('Non-cell value returned.');
         varargout = {varargout};

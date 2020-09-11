@@ -10,6 +10,15 @@ function alignplot(hFig, Nx, Ny, Px, Py, screen)
         Py = floor((Px-1)/Nx)+1;
         Px = mod(Px-1, Nx)+1;
     end
+    if(nargin > 5 && isempty(Px))
+        Px = floor((Py-1)/Ny)+1;
+        Py = mod(Py-1, Ny)+1;
+    end
+    if(~isa(hFig, 'matlab.ui.Figure'))
+        if(isa(hFig, 'matlab.graphics.axis.Axes'))
+            hFig = hFig.Parent;
+        end
+    end
     
     Px = mod(Px-1, Nx)+1;
     Py = mod(Py-1, Ny)+1;

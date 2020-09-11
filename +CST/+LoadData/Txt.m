@@ -11,9 +11,18 @@ function [parameters, out] = Txt(filename)
             [parameters, out] = ReadAutomaticExport(fileID);
         case 2
             [f, parameters, out] = ReadManualExport(fileID);
+            for(i = 1:length(parameters))
+                parameters{i}.frequencies = [f{i,:}];
+            end
         case 3
             [f, parameters, out] = ReadCopyPaste(fileID);
+            for(i = 1:length(parameters))
+                parameters{i}.frequencies = [f{i,:}];
+            end
     end
+    
+    fclose(fileID);
+    
     % Wrap up the values in a cell since they're returned as varargout in LoadData.
     out = {out};
 end

@@ -59,7 +59,7 @@ function [parameters, out] = Grasp(filename)
         end
 
         % Get the filename, monitor name and polarization.
-        str = header(1:i1);
+        str = header;
         split = strsplit(str, ',');
         parameters.filename = split{1}(18:end);
         parameters.monitorname = split{2}(2:end);
@@ -128,4 +128,7 @@ function [parameters, out] = Grasp(filename)
             out(k, :, i) = dat(2*k-1, :) + 1j .* dat(2*k, :);
         end
     end
+    
+    fclose(fileID);
+    out = {out};
 end

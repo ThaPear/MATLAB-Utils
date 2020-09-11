@@ -3,7 +3,7 @@ classdef Binomial
         function [Zs] = GetImpedances(z1, z2, N)
             C = @(n, N) factorial(N) ./ (factorial(N-n) .* factorial(n));
             
-            Zs = [];
+            Zs = zeros(1,N);
             for(n = 1:N)
                 if(n == 1)
                     Zs(n) = exp(log(z1) + 2 .^ -N .* C(n-1, N) .* log(z2./z1));
